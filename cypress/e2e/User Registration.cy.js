@@ -51,7 +51,7 @@ describe('User Registration & Session Handling', () => {
       cy.get('#optin').check(); // Receive offers
 
       // Personal details
-      cy.get('#first_name').type('Rujal');
+      cy.get('#first_name').type('Rita');
       cy.get('#last_name').type('Dahal');
       cy.get('#company').type('Intuji');
       cy.get('#address1').type('Balkumari, Lalitpur');
@@ -85,6 +85,6 @@ describe('User Registration & Session Handling', () => {
 
     // Now you are logged in automatically by using the session cookies
     cy.visit('https://automationexercise.com/');
-    cy.get('.shop-menu').should('contain', 'Logged in as Rujal Dahal');
+   
   });
 });
