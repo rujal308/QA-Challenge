@@ -1,0 +1,54 @@
+[
+  {
+    "name": "sessionid",
+    "value": "k8zlip5tvy90c1qek7iaexn860lrn9a0",
+    "path": "/",
+    "secure": false,
+    "hostOnly": true,
+    "httpOnly": true,
+    "expiry": 1746786493.248,
+    "domain": "automationexercise.com",
+    "sameSite": "lax"
+  },
+  {
+    "name": "__eoi",
+    "value": "ID=d31d9b463b74f6de:T=1745576884:RT=1745576884:S=AA-AfjaU8NPsVeg-JasFUpJoKBiW",
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "expiry": 1761128884,
+    "domain": ".automationexercise.com",
+    "sameSite": "no_restriction"
+  },
+  {
+    "name": "csrftoken",
+    "value": "z1IhIEjOrHEfJLWK9F85ybkWwKbJmW7So2dvUwB73eSU0xkQJdFLvdnAlRaRaPsp",
+    "path": "/",
+    "secure": false,
+    "hostOnly": true,
+    "httpOnly": false,
+    "expiry": 1777026493.560818,
+    "domain": "automationexercise.com",
+    "sameSite": "lax"
+  },
+  {
+    "name": "__gads",
+    "value": "ID=39271f992721f777:T=1745576884:RT=1745576884:S=ALNI_MZktoM0BcVueGPdrcGF2iWxjLectw",
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "expiry": 1779272884,
+    "domain": ".automationexercise.com",
+    "sameSite": "no_restriction"
+  },
+  {
+    "name": "__gpi",
+    "value": "UID=000010b0bb4eba98:T=1745576884:RT=1745576884:S=ALNI_MYHEbbdAHLJT2evr8BzPltQc_B-LA",
+    "path": "/",
+    "secure": true,
+    "httpOnly": false,
+    "expiry": 1779272884,
+    "domain": ".automationexercise.com",
+    "sameSite": "no_restriction"
+  }
+]

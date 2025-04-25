@@ -1,42 +1,90 @@
 import { faker } from '@faker-js/faker';
 
 describe('User Registration & Session Handling', () => {
+  let randomName;
+  let randomEmail;
+  let randomPassword;
 
-  const userEmail = 'abc@example.com'; // Hardcoded email for testing
+  before(() => {
+    // Generate user details
+    randomName = faker.person.fullName();
+    randomEmail = faker.internet.email();
+    randomPassword = faker.internet.password();
 
-  // Function to handle registration and retry if email is taken
-  const registerWithRandomEmail = () => {
-    const randomName = faker.name.fullName();
-    const randomEmail = faker.internet.email();
-    const randomPassword = faker.internet.password();
-
-    // Visit the website
+    // Visit the site and go to signup page — only once
     cy.visit('https://automationexercise.com/');
-
-    // Click on the "Signup / Login" button
     cy.get("a[href='/login']").click();
+  });
 
-    // Fill in the registration form
-    cy.get("input[placeholder='Name']").clear().type(randomName);
-    cy.get("input[data-qa='signup-email']").clear().type(randomEmail);
-    cy.get("button[data-qa='signup-button']").click();
+  it('Registers a new user and handles duplicate email', () => {
+    const trySignup = () => {
+      cy.get("input[placeholder='Name']").clear().type(randomName);
+      cy.get("input[data-qa='signup-email']").clear().type(randomEmail);
+      cy.get("button[data-qa='signup-button']").click();
 
-    // Check if email is unique or if the email already exists
-    cy.get('body').then(($body) => {
-      if ($body.text().includes('Email Address already exist!')) {
-        cy.log('⚠️ Email already exists. Retrying with a new one...');
+      cy.get('body').then(($body) => {
+        if ($body.text().includes('Email Address already exist!')) {
+          cy.log('Email already exists. Retrying with a new email');
+          randomEmail = faker.internet.email(); // Generate a new email
+          trySignup(); // Recursive retry
+        } else {
+          cy.log('Proceeding with full registration using: ' + randomEmail);
+          fillFullRegistrationForm(); // Continue with full registration
+        }
+      });
+    };
 
-        // If duplicate email is detected, retry with a predefined 'used' email
-    cy.get("input[data-qa='signup-email']").clear().type(userEmail);
-    cy.get("button[data-qa='signup-button']").click();      
-  } else {
-        cy.log('Registration successful with email: ${randomEmail}');
-       
-      }
+    const fillFullRegistrationForm = () => {
+      // Select radio button for gender
+      cy.get('#id_gender2').check();
+
+      // Password
+      cy.get('#password').type(randomPassword);
+
+      // Date of birth dropdowns
+      cy.get('#days').select('10');
+      cy.get('#months').select('May');
+      cy.get('#years').select('1995');
+
+      // Optional checkboxes
+      cy.get('#newsletter').check(); // Subscribe to newsletter
+      cy.get('#optin').check(); // Receive offers
+
+      // Personal details
+      cy.get('#first_name').type('Rujal');
+      cy.get('#last_name').type('Dahal');
+      cy.get('#company').type('Intuji');
+      cy.get('#address1').type('Balkumari, Lalitpur');
+      cy.get('#country').select('India');
+      cy.get('#state').type('Bagmati');
+      cy.get('#city').type('Kathmandu');
+      cy.get('#zipcode').type('44600');
+      cy.get('#mobile_number').type('9800000000');
+
+      // Submit form
+      cy.get("button[data-qa='create-account']").click();
+
+      // Assert success message
+      cy.contains('Account Created!').should('be.visible');
+
+      // Store session cookies after successful registration
+      cy.getCookies().then((cookies) => {
+        cy.writeFile('cypress/fixtures/session.json', cookies);
+      });
+    };
+
+    trySignup(); // Start the signup process
+  });
+
+  it('Reuses session/cookies for subsequent tests', () => {
+    cy.readFile('cypress/fixtures/session.json').then((cookies) => {
+      cookies.forEach((cookie) => {
+        cy.setCookie(cookie.name, cookie.value);
+      });
     });
-  };
 
-  it('Registers a new user and stores session if email is unique', () => {
-    registerWithRandomEmail(); // Call the registration function
+    // Now you are logged in automatically by using the session cookies
+    cy.visit('https://automationexercise.com/');
+    cy.get('.shop-menu').should('contain', 'Logged in as Rujal Dahal');
   });
 });
