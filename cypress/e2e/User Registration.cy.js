@@ -1,56 +1,38 @@
 import { faker } from '@faker-js/faker';
 
 describe('User Registration & Session Handling', () => {
-  let randomName;
-  let randomEmail;
-  let randomPassword;
+  const randomName = faker.person.fullName();
+  const randomEmail = faker.internet.email();
+  const randomPassword = faker.internet.password();
 
   before(() => {
-    // Generate user details
-    randomName = faker.person.fullName();
-    randomEmail = faker.internet.email();
-    randomPassword = faker.internet.password();
+    cy.session('user', () => {
+      cy.visit('https://automationexercise.com/');
+      cy.get("a[href='/login']").click();
 
-    // Visit the site and go to signup page — only once
-    cy.visit('https://automationexercise.com/');
-    cy.get("a[href='/login']").click();
-  });
-
-  it('Registers a new user and handles duplicate email', () => {
-    const trySignup = () => {
-      cy.get("input[placeholder='Name']").clear().type(randomName);
-      cy.get("input[data-qa='signup-email']").clear().type(randomEmail);
+      // Try signup
+      cy.get("input[placeholder='Name']").type(randomName);
+      cy.get("input[data-qa='signup-email']").type(randomEmail);
       cy.get("button[data-qa='signup-button']").click();
 
       cy.get('body').then(($body) => {
         if ($body.text().includes('Email Address already exist!')) {
-          cy.log('Email already exists. Retrying with a new email');
-          randomEmail = faker.internet.email(); // Generate a new email
-          trySignup(); // Recursive retry
-        } else {
-          cy.log('Proceeding with full registration using: ' + randomEmail);
-          fillFullRegistrationForm(); // Continue with full registration
+          // If email already exists, generate new one
+          const newEmail = faker.internet.email();
+          cy.get("input[placeholder='Name']").clear().type(randomName);
+          cy.get("input[data-qa='signup-email']").clear().type(newEmail);
+          cy.get("button[data-qa='signup-button']").click();
         }
       });
-    };
 
-    const fillFullRegistrationForm = () => {
-      // Select radio button for gender
+      // Fill registration form
       cy.get('#id_gender2').check();
-
-      // Password
       cy.get('#password').type(randomPassword);
-
-      // Date of birth dropdowns
       cy.get('#days').select('10');
       cy.get('#months').select('May');
       cy.get('#years').select('1995');
-
-      // Optional checkboxes
-      cy.get('#newsletter').check(); // Subscribe to newsletter
-      cy.get('#optin').check(); // Receive offers
-
-      // Personal details
+      cy.get('#newsletter').check();
+      cy.get('#optin').check();
       cy.get('#first_name').type('Rita');
       cy.get('#last_name').type('Dahal');
       cy.get('#company').type('Intuji');
@@ -61,30 +43,20 @@ describe('User Registration & Session Handling', () => {
       cy.get('#zipcode').type('44600');
       cy.get('#mobile_number').type('9800000000');
 
-      // Submit form
+      // Submit
       cy.get("button[data-qa='create-account']").click();
-
-      // Assert success message
       cy.contains('Account Created!').should('be.visible');
 
-      // Store session cookies after successful registration
-      cy.getCookies().then((cookies) => {
-        cy.writeFile('cypress/fixtures/session.json', cookies);
-      });
-    };
+      // Click Continue after registration
+      cy.get("a[data-qa='continue-button']").click();
 
-    trySignup(); // Start the signup process
+      // Confirm Logged In
+      cy.contains('Logged in as').should('be.visible');
+    });
   });
 
-  it('Reuses session/cookies for subsequent tests', () => {
-    cy.readFile('cypress/fixtures/session.json').then((cookies) => {
-      cookies.forEach((cookie) => {
-        cy.setCookie(cookie.name, cookie.value);
-      });
-    });
-
-    // Now you are logged in automatically by using the session cookies
+  it('Should stay logged in using session', () => {
     cy.visit('https://automationexercise.com/');
-   
+    cy.contains('Logged in as').should('be.visible');
   });
 });
