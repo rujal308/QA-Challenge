@@ -1,1 +1,1 @@
-# Intuji-QA-Associate-Task
+# Intuji-QA-Associate-Challenge
