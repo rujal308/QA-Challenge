@@ -1,3 +1,4 @@
+
 # Intuji-QA-Associate-Task
 # Cypress Automation Assessment
 
@@ -48,6 +49,7 @@ Or run in headless mode
 - Page Object Model (POM) not used.
 - No Cypress intercepts or API response assertions implemented.
 - No visual screenshot comparisons included.
+
 
 
 
