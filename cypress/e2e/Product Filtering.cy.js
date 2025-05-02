@@ -1,6 +1,15 @@
 import { faker } from '@faker-js/faker';
 
 describe('Product Browsing - Filtering', () => {
+    
+    beforeEach(() => {
+        cy.session('user', () => {
+          cy.registerAndLogin(); // reused logic from commands.js
+        });
+        cy.visit('https://automationexercise.com/');
+        cy.contains('Logged in as').should('be.visible'); // confirm session worked
+      });
+
     it('Navigates, filters, clicks product, and verifies details', () => {
         cy.visit('https://automationexercise.com/products');
     

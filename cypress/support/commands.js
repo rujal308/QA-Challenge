@@ -65,5 +65,10 @@ Cypress.Commands.add('registerAndLogin', () => {
   cy.get("button[data-qa='create-account']").click();
   cy.contains('Account Created!').should('be.visible');
   cy.get("a[data-qa='continue-button']").click();
-  cy.contains('Logged in as').should('be.visible');
+
+  // Save credentials
+  cy.writeFile('cypress/fixtures/user.json', {
+    randomEmail,
+    randomPassword,
+  });
 });
