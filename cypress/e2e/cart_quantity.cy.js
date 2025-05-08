@@ -43,7 +43,7 @@ describe('Cart and Quantity Management', () => {
         cy.contains('Continue Shopping').click();
 
 
-        // View Cart
+        // View Cart code
         cy.get("p[class='text-center'] a").click({force: true});
 
         // Verify total number of  products added
