@@ -1,5 +1,5 @@
 
-# Intuji-QA-Associate-Task
+# QA-Challenge-Task
 # Cypress Automation Assessment
 
 This project is a Cypress automation test suite for (https://automationexercise.com). It covers key flows including user registration, session handling, product browsing, cart management, and checkout.
